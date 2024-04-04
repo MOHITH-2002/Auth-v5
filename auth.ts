@@ -1,6 +1,8 @@
 import NextAuth from "next-auth"
 
 import authConfig from "@/auth.config";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import clientPromise from "./lib/mongodb";
 
 export const {
   handlers: { GET, POST },
@@ -10,16 +12,17 @@ export const {
 } = NextAuth({
     callbacks:{
       async session({ session, user, token }) {
-        console.log(session);
         
       return session
     },
     async jwt({ token }) {
-      console.log(token);
       return token
       
     }
 
     },
+    secret: process.env.AUTH_SECRET,
+    adapter: MongoDBAdapter(clientPromise),
+    session: { strategy: "jwt" },
   ...authConfig,
 });

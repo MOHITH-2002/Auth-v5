@@ -46,7 +46,18 @@ export default auth((req) => {
   return null;
 })
 
+
+
 // Optionally, don't invoke Middleware on some paths
 export const config = {
   matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+  unstable_allowDynamic: [
+    './auth.config.ts',
+    '/auth.config.ts',
+    './lib/models/user.model.ts',
+    '/lib/models/user.model.ts',
+    './node_modules/mongoose/dist/browser.umd.js',
+    '/node_modules/mongoose/dist/browser.umd.js',
+  ],
+
 }
