@@ -10,16 +10,14 @@ import { FormSuccess } from "@/components/form-success";
 import { newVerification } from "@/lib/actions/verification-token";
 
 export const NewVerificationForm = () => {
-
-
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
+
   const searchParams = useSearchParams();
 
-  const token = searchParams.get('token');
-  
+  const token = searchParams.get("token");
 
-  const onSubmit = useCallback(async () => {
+    const onSubmit = useCallback(async () => {
     if (success || error) return;
 
     if (!token) {
@@ -33,7 +31,7 @@ export const NewVerificationForm = () => {
         setError(data.error);
       })
       .catch(() => {
-        setError('Something went wrong!');
+        setError("Something went wrong!");
       });
   }, [token, success, error]);
 
