@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import {PulseLoader } from "react-spinners";
 import { useSearchParams } from "next/navigation";
 
@@ -40,6 +40,8 @@ export const NewVerificationForm = () => {
   }, [onSubmit]);
 
   return (
+    
+
     <CardWrapper
       headerLabel="Confirming your verification"
       backButtonLabel="Back to login"
@@ -55,5 +57,6 @@ export const NewVerificationForm = () => {
         )}
       </div>
     </CardWrapper>
+      
   )
 }
