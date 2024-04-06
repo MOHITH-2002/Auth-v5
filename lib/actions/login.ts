@@ -10,13 +10,16 @@ import { signIn } from "@/auth";
 import { generateVerificationToken } from "../token";
 import User from "../database/model/user";
 import { sendVerificationEmail } from "../Email/mail";
+import { connectToDb } from "../database/db";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
+
   const validatedFields = LoginSchema.safeParse(values);
 
   if (!validatedFields.success) {
     return { error: "Invalid fields!" };
   }
+  await connectToDb();
 
   const { email, password } = validatedFields.data;
   const existingUser = await User.findOne({email});
