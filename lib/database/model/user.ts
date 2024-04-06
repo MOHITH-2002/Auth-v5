@@ -1,6 +1,6 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const UserSchema = new Schema({
+const userSchema = new mongoose.Schema({
 
     email: {
     type: String,
@@ -14,13 +14,18 @@ const UserSchema = new Schema({
     password:{
         type:String,
     },
+    image:{type:String},
     emailVerified: {
         type:Date,
+        default:null
         
-    }
+    },createdAt: {
+		type: Date,
+		default: Date.now,
+	},
 
 });
 
-const User = models?.User || model("User", UserSchema);
+export default mongoose.models?.User || mongoose.model("User", userSchema);
 
-export default User;
+// export default User;

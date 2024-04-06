@@ -21,12 +21,19 @@ import { FormSuccess } from "@/components/form-success";
 import { LoginSchema } from "@/lib/zodSchema";
 import { login } from "@/lib/actions/login";
 
-
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { FaEye, FaEyeSlash, FaSlash } from "react-icons/fa";
 export const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, setisPending] = useState<boolean>(false);
+  const [passwordOpen,setPasswordOpen] = useState<string>("password");
 
+const searchParams = useSearchParams();
+  const urlError = searchParams.get("error") === "OAuthAccountNotLinked"
+    ? "Email already use in Google provider!"
+    : "";
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -45,6 +52,9 @@ export const LoginForm = () => {
     
     if(res?.error){
       setError(res.error);
+    }
+    if(res?.success){
+      setSuccess(res.success);
     }
     setisPending(false)
   };
@@ -87,19 +97,40 @@ export const LoginForm = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
+                    <div className="flex items-center w-full relative">
+
                     <Input
                       {...field}
                       disabled={isPending}
                       placeholder="******"
-                      type="password"
-                    />
+                      type={passwordOpen}
+                      />
+                      {
+                        passwordOpen && passwordOpen === "text" ? 
+                        (<FaEyeSlash size={20} className="absolute flex right-2 text-muted-foreground cursor-pointer" onClick={()=>setPasswordOpen("password")}/>)
+                        :
+                        (<FaEye size={20} className="absolute flex right-2 text-muted-foreground cursor-pointer" onClick={()=>setPasswordOpen("text")}/>)
+                      }
+                        </div>
+                    
+
                   </FormControl>
+                  <Button
+                    size="sm"
+                    variant="link"
+                    asChild
+                    className="px-0 font-normal"
+                  >
+                    <Link href="/auth/reset-password">
+                      Forgot password?
+                    </Link>
+                  </Button>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-          <FormError message={error} />
+         <FormError message={error || urlError} />
           <FormSuccess message={success} />
           <Button
             disabled={isPending}

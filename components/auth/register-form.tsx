@@ -20,13 +20,14 @@ import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { RegisterSchema } from "@/lib/zodSchema";
 import { register } from "@/lib/actions/register";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, setisPending] = useState<boolean>(false);
-
+  const [passwordOpen,setPasswordOpen] = useState<string>("password");
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -109,12 +110,21 @@ export const RegisterForm = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
+                    <div className="flex items-center w-full relative">
+
                     <Input
                       {...field}
                       disabled={isPending}
                       placeholder="******"
-                      type="password"
-                    />
+                      type={passwordOpen}
+                      />
+                      {
+                        passwordOpen && passwordOpen === "text" ? 
+                        (<FaEyeSlash size={20} className="absolute flex right-2 text-muted-foreground cursor-pointer" onClick={()=>setPasswordOpen("password")}/>)
+                        :
+                        (<FaEye size={20} className="absolute flex right-2 text-muted-foreground cursor-pointer" onClick={()=>setPasswordOpen("text")}/>)
+                      }
+                        </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

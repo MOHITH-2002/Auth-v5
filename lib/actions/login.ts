@@ -7,6 +7,9 @@ import { AuthError } from "next-auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { LoginSchema } from "../zodSchema";
 import { signIn } from "@/auth";
+import { generateVerificationToken } from "../token";
+import User from "../database/model/user";
+import { sendVerificationEmail } from "../Email/mail";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
   const validatedFields = LoginSchema.safeParse(values);
@@ -16,7 +19,22 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
   }
 
   const { email, password } = validatedFields.data;
+  const existingUser = await User.findOne({email});
+  
 
+  if (!existingUser || !existingUser.email || !existingUser.password) {
+    // console.error('User not found or incomplete data:', existingUser);
+
+    return { error: 'Email does not exist!' };
+  }
+  if (!existingUser.emailVerified) {
+    // console.log('Email not verified. Sending verification...');
+    const verificationToken = await generateVerificationToken(existingUser.email);
+
+    await sendVerificationEmail(verificationToken.email, verificationToken.token);
+
+    return { success: 'Confirmation Email sent!' };
+  }
   try {
     await signIn("credentials", {
       email,

@@ -4,6 +4,8 @@ import * as z from "zod";
 import { RegisterSchema } from "../zodSchema";
 import { connectToDb } from "../database/db";
 import User from "../database/model/user";
+import { generateVerificationToken } from "../token";
+import { sendVerificationEmail } from "../Email/mail";
 
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
@@ -18,13 +20,16 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
   const existingUser = await User.findOne({email});
   if(existingUser) {
-    return { error: "Email already exists"}
+    return { error: "Email already exists!"}
   }
   const hashedPassword = await bcrypt.hash(password, 10);
 
   
   await User.create({ email, name, password:hashedPassword });
-  return { success: "Email sent!" };
+  const verificationToken = await generateVerificationToken(email);
+
+  await sendVerificationEmail(verificationToken.email, verificationToken.token);
+  return { success: "Confirmation Email sent!" };
   } catch (error) {
     console.log(error);
     
